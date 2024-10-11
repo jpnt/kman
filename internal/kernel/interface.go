@@ -1,6 +1,6 @@
 package kernel
 
-import "github.com/jpnt/kman/pkg/logger"
+import "kman/pkg/logger"
 
 type KernelManager interface {
 	ListAvailableVersions() ([]Kernel, error)

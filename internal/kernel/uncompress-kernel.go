@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jpnt/kman/pkg/utils"
+	"kman/pkg/utils"
 )
 
 func UncompressKernel(kernelPath string) (string, error) {

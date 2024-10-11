@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/jpnt/kman/pkg/progress"
-	"github.com/jpnt/kman/pkg/utils"
+	"kman/pkg/progress"
+	"kman/pkg/utils"
 )
 
 const (

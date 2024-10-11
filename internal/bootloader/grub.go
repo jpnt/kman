@@ -1,7 +1,7 @@
 package bootloader
 
 import (
-	"github.com/jpnt/kman/pkg/logger"
+	"kman/pkg/logger"
 )
 
 type GRUB struct {

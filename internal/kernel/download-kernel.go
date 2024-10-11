@@ -1,14 +1,14 @@
 package kernel
 
 import (
-	"github.com/jpnt/kman/pkg/progress"
-	"github.com/jpnt/kman/pkg/utils"
+	"kman/pkg/progress"
+	"kman/pkg/utils"
 )
 
 func DownloadKernel(sourceURL, destPath string) (string, error) {
-	pb := &progress.WriteCounter{}
+	p := &progress.WriteCounter{}
 
-	kernelPath, err := utils.DownloadFile(sourceURL, destPath, pb)
+	kernelPath, err := utils.DownloadFile(sourceURL, destPath, p)
 	if err != nil {
 		return "", err
 	}

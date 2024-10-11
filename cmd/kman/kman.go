@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jpnt/kman/internal/kernel"
-	"github.com/jpnt/kman/pkg/logger"
-	"github.com/jpnt/kman/pkg/utils"
+	"kman/internal/kernel"
+	"kman/pkg/logger"
+	"kman/pkg/progress"
+	"kman/pkg/utils"
 )
 
 const (

@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jpnt/kman/pkg/progress"
+	"kman/pkg/progress"
 )
 
 func ConfirmAction(prompt string) bool {
@@ -27,7 +27,7 @@ func ConfirmAction(prompt string) bool {
 	return strings.ToLower(input) == "y"
 }
 
-func DownloadFile(url, destPath string, pb progress.ProgressBar) (string, error) {
+func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
 	// Get file name and create full path
 	filePath := filepath.Join(destPath, filepath.Base(url))
 
@@ -61,15 +61,15 @@ func DownloadFile(url, destPath string, pb progress.ProgressBar) (string, error)
 	}
 
 	// Initialize progress tracking
-	pb.Start(resp.ContentLength)
+	p.Start(resp.ContentLength)
 
 	// Write response body to file
-	_, err = io.Copy(outFile, io.TeeReader(resp.Body, pb.(*progress.WriteCounter)))
+	_, err = io.Copy(outFile, io.TeeReader(resp.Body, p.(*progress.WriteCounter)))
 	if err != nil {
 		return "", fmt.Errorf("error writing file: %w", err)
 	}
 
-	pb.Finish()
+	p.Finish()
 	fmt.Printf("Saved file to: %s\n", filePath)
 	return filePath, nil
 }
