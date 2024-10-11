@@ -1,0 +1,105 @@
+package utils
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+
+	"github.com/jpnt/kman/pkg/progress"
+)
+
+func ConfirmAction(prompt string) bool {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print(prompt + " ")
+
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return false
+	}
+
+	input = strings.TrimSpace(input)
+	return strings.ToLower(input) == "y"
+}
+
+func DownloadFile(url, destPath string, pb progress.ProgressBar) (string, error) {
+	// Get file name and create full path
+	filePath := filepath.Join(destPath, filepath.Base(url))
+
+	// Ensure destination directory exists
+	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
+		return "", fmt.Errorf("error creating directory: %w", err)
+	}
+
+	// If file already exists then return
+	if _, err := os.Stat(filePath); err == nil {
+		fmt.Printf("File already exists: %s\n", filePath)
+		return filePath, nil
+	}
+
+	// Open file for writing
+	outFile, err := os.Create(filePath)
+	if err != nil {
+		return "", fmt.Errorf("error creating file: %w", err)
+	}
+	defer outFile.Close()
+
+	// Get the file from the URL
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("error downloading file: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected response status: %d", resp.StatusCode)
+	}
+
+	// Initialize progress tracking
+	pb.Start(resp.ContentLength)
+
+	// Write response body to file
+	_, err = io.Copy(outFile, io.TeeReader(resp.Body, pb.(*progress.WriteCounter)))
+	if err != nil {
+		return "", fmt.Errorf("error writing file: %w", err)
+	}
+
+	pb.Finish()
+	fmt.Printf("Saved file to: %s\n", filePath)
+	return filePath, nil
+}
+
+func UncompressFile(filePath, extractDir string) error {
+	ext := filepath.Ext(filePath)
+
+	var cmd *exec.Cmd
+
+	if err := os.MkdirAll(extractDir, 0755); err != nil {
+		return fmt.Errorf("failed to create extraction directory: %v", err)
+	}
+
+	switch ext {
+	case ".gz":
+		cmd = exec.Command("tar", "-xzf", filePath, "-C", extractDir)
+	case ".xz":
+		cmd = exec.Command("tar", "-xJf", filePath, "-C", extractDir)
+	default:
+		return fmt.Errorf("unsupported file extension: %s", ext)
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	fmt.Printf("Uncompressing: %s\n", filePath)
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to uncompress file: %v", err)
+	}
+
+	return nil
+}
