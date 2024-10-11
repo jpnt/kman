@@ -7,6 +7,7 @@ of your system.
 
 ## Project Structure
 
+```
 kman/
 |_ cmd/
 |    |_ kman/
@@ -44,6 +45,7 @@ kman/
     |    |_ progress.go
     |_ utils
          |_ utils.go
+```
 
 ## Design Patterns
 
@@ -51,8 +53,8 @@ Command Pattern: Encapsulates each operation (downloading, configuring, etc)
 into a command class, allowing for easy execution and management.
 
 Strategy Pattern: The strategy lets the algorithm vary independently from clients
-that use it. Used for handling multiple bootloaders (e.g., GRUB, LILO, systemd-boot),
-multiple initramfs tools (e.g., Dracut, mkinitcpio).
+that use it. Used for handling multiple bootloaders (e.g., GRUB, LILO, systemd-boot)
+and multiple initramfs tools (e.g., Dracut, mkinitcpio, booster).
 
 State Machine Pattern: Used to represent different phases of the kernel management
 process (downloading, installing, configuring, etc.) and manage transitions between these states.
