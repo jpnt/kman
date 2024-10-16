@@ -9,7 +9,7 @@ import (
 	"kman/pkg/utils"
 )
 
-func UncompressKernel(kernelPath string) (string, error) {
+func ExtractKernel(kernelPath string) (string, error) {
 	kernelDirPath := filepath.Dir(kernelPath)
 
 	// Expected extracted kernel directory
@@ -26,6 +26,6 @@ func UncompressKernel(kernelPath string) (string, error) {
 		return "", err
 	}
 	
-	fmt.Printf("Kernel uncompressed to: %s\n", extractKernelPath)
+	fmt.Printf("Kernel extracted to: %s\n", extractKernelPath)
 	return extractKernelPath, nil
 }

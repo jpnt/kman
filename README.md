@@ -47,7 +47,7 @@ kman/
          |_ utils.go
 ```
 
-## Design Patterns
+### Design Patterns
 
 Command Pattern: Encapsulates each operation (downloading, configuring, etc)
 into a command class, allowing for easy execution and management.
@@ -62,5 +62,4 @@ process (downloading, installing, configuring, etc.) and manage transitions betw
 Facade Pattern: Simplifies user interactions with the kernel management process,
 providing a clear interface for common operations.
 
-Builder Pattern: Provides a flexible way to construct complex kernel configuration 
-parameters step-by-step.
+Builder Pattern: Provides a flexible way to construct kernel configuration parameters step-by-step.

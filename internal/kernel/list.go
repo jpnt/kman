@@ -27,7 +27,7 @@ type Item struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-// Output struct after fetching/listing kernels
+// Output struct after scraping kernels
 type Kernel struct {
 	Title         string
 	ReleaseDate   string
@@ -54,18 +54,22 @@ func ListKernels() ([]Kernel, error) {
 func fetchKernels() ([]Kernel, error) {
 	resp, err := http.Get(kernelFeed)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch kernel feed: %w", err)
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("received non-200 response: %s", resp.Status)
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	var rss RSS
 	if err := xml.Unmarshal(body, &rss); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal XML: %w", err)
 	}
 
 	var kernels []Kernel
