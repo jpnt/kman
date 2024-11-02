@@ -18,6 +18,7 @@ kman/
 |    |    |    |_ dp_strategy.go
 |    |    |    |_ grub.go
 |    |    |    |_ systemd-boot.go
+|    |    |    |_ limine.go
 |    |    |   
 |    |    |_ initramfs
 |    |    |    |_ dp_strategy.go
@@ -59,7 +60,7 @@ and multiple initramfs tools (e.g., Dracut, mkinitcpio, booster).
 State Machine Pattern: Used to represent different phases of the kernel management
 process (downloading, installing, configuring, etc.) and manage transitions between these states.
 
+Builder Pattern: Provides a flexible way to construct kernel configuration parameters step-by-step.
+
 Facade Pattern: Simplifies user interactions with the kernel management process,
 providing a clear interface for common operations.
-
-Builder Pattern: Provides a flexible way to construct kernel configuration parameters step-by-step.

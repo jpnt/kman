@@ -1,11 +1,13 @@
 package kernel
 
 import (
-	"fmt"
-
-	"kman/pkg/logger"
 	"kman/internal/pkg"
+	"kman/pkg/logger"
 )
+
+type IKernelFacade interface {
+	Run()
+}
 
 type KernelFacade struct {
 	logger	*logger.Logger
@@ -19,10 +21,9 @@ func NewKernelFacade(l *logger.Logger, cm *pkg.CommandManager) *KernelFacade {
 	}
 }
 
-func (kf *KernelFacade) ManageKernel() error {
+func (kf *KernelFacade) Run() {
 	kf.logger.Info("Executing all given commands ...")
 	if err := kf.cmds.ExecuteAll(); err != nil {
-		return fmt.Errorf("failed to execute commands: %w", err)
+		kf.logger.Error("failed to execute commands: %s", err.Error())
 	}
-	return nil
 }

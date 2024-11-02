@@ -1,10 +1,16 @@
 package kernel
 
 import (
-	"kman/pkg/logger"
 	"kman/internal/pkg"
+	"kman/pkg/logger"
 )
 
+type IKernelBuilder interface {
+	WithDownload() *KernelBuilder
+	WithDefault() *KernelBuilder
+	Build() *KernelFacade
+}
+ 
 type KernelBuilder struct {
 	logger	*logger.Logger
 	cmds	*pkg.CommandManager
@@ -23,6 +29,11 @@ func (kb *KernelBuilder) WithDownload() *KernelBuilder {
 	return kb
 }
 
-func (kb *KernelBuilder) Build() (*KernelFacade, error) {
-	return NewKernelFacade(kb.logger, kb.cmds), nil
+func (kb *KernelBuilder) WithDefault() *KernelBuilder {
+	kb.WithDownload()
+	return kb
+}
+
+func (kb *KernelBuilder) Build() *KernelFacade {
+	return NewKernelFacade(kb.logger, kb.cmds)
 }
