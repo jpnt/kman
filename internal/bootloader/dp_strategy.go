@@ -1,5 +1,5 @@
 package bootloader
 
-type Bootloader interface {
+type IBootloader interface {
 	Configure() error
 }

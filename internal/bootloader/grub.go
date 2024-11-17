@@ -2,15 +2,17 @@ package bootloader
 
 import "kman/pkg/logger"
 
-type GRUB struct {
+type Grub struct {
 	logger *logger.Logger
 }
 
-func NewGRUB(l *logger.Logger) *GRUB {
-	return &GRUB{logger: l}
+var _ IBootloader = (*Grub)(nil)
+
+func NewGRUB(l *logger.Logger) *Grub {
+	return &Grub{logger: l}
 }
 
-func (g *GRUB) Configure() error {
+func (g *Grub) Configure() error {
 	g.logger.Info("Configuring GRUB bootloader ...")
 	// TODO
 	return nil

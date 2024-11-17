@@ -6,6 +6,8 @@ type SystemdBoot struct {
 	logger *logger.Logger
 }
 
+var _ IBootloader = (*SystemdBoot)(nil)
+
 func NewSystemdBoot(l *logger.Logger) *SystemdBoot {
 	return &SystemdBoot{logger: l}
 }

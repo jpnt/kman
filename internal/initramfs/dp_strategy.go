@@ -1,5 +1,5 @@
 package initramfs
 
-type Initramfs interface {
+type IInitramfs interface {
 	Generate() error
 }

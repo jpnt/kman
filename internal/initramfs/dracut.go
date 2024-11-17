@@ -3,8 +3,10 @@ package initramfs
 import "kman/pkg/logger"
 
 type Dracut struct {
-	logger 		*logger.Logger
+	logger *logger.Logger
 }
+
+var _ IInitramfs = (*Dracut)(nil)
 
 func NewDracut(l *logger.Logger) *Dracut {
 	return &Dracut{logger: l}
