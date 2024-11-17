@@ -1,6 +1,11 @@
 package kernel
 
-import "kman/pkg/logger"
+import (
+	"fmt"
+	"kman/pkg/logger"
+	"os"
+	"os/exec"
+)
 
 type ConfigureCommand struct {
 	logger *logger.Logger
@@ -9,10 +14,24 @@ type ConfigureCommand struct {
 
 var _ ICommand = (*ConfigureCommand)(nil)
 
-func (c *ConfigureCommand) Execute() error {
-	// If args == "": run default command: make defconfig
+var defaultOption = "defconfig"
+var options = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
 
-	// Parse config options from the arguments passed at runtime
+func (c *ConfigureCommand) Execute() error {
+	// TODO
+	o := defaultOption
+	c.logger.Info("Configuring Linux kernel with: make %s", o)
+
+	cmd := exec.Command("make", o)
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("kernel configuration failed: %w", err)
+	}
+
+	c.logger.Info("Configured Linux kernel")
 
 	return nil
 }

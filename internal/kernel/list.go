@@ -54,8 +54,13 @@ func (c *ListCommand) Execute() error {
 		return err
 	}
 
-	c.logger.Info("Kernel source URL: %s\n", selectedKernel.SourceTarball)
-	c.ctx.sourceURL = selectedKernel.SourceTarball
+	if selectedKernel.PGPSignature == "" {
+		c.ctx.skipVerify = true
+	} else {
+		c.ctx.signatureURL = selectedKernel.PGPSignature
+	}
+
+	c.ctx.tarballURL = selectedKernel.SourceTarball
 
 	return nil
 }

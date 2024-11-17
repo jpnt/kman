@@ -7,6 +7,7 @@ import (
 type IKernelBuilder interface {
 	WithList() *KernelBuilder
 	WithDownload() *KernelBuilder
+	WithVerify() *KernelBuilder
 	WithExtract() *KernelBuilder
 	WithConfigure() *KernelBuilder
 	// WithPatch() *KernelBuilder
@@ -52,6 +53,15 @@ func (kb *KernelBuilder) WithDownload() *KernelBuilder {
 	return kb
 }
 
+func (kb *KernelBuilder) WithVerify() *KernelBuilder {
+	cmd := &VerifyCommand{
+		logger: kb.logger,
+		ctx:    kb.ctx,
+	}
+	kb.cmds.AddCommand(cmd)
+	return kb
+}
+
 func (kb *KernelBuilder) WithExtract() *KernelBuilder {
 	cmd := &ExtractCommand{
 		logger: kb.logger,
@@ -73,6 +83,7 @@ func (kb *KernelBuilder) WithConfigure() *KernelBuilder {
 func (kb *KernelBuilder) WithDefault() *KernelBuilder {
 	kb.WithList()
 	kb.WithDownload()
+	kb.WithVerify()
 	kb.WithExtract()
 	kb.WithConfigure()
 	return kb

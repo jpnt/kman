@@ -15,15 +15,16 @@ type DownloadCommand struct {
 var _ ICommand = (*DownloadCommand)(nil)
 
 func (c *DownloadCommand) Execute() error {
-	p := &progress.WriteCounter{}
+	c.logger.Info("Downloading Linux kernel tarball from URL: %s ...", c.ctx.tarballURL)
 
-	kernelPath, err := utils.DownloadFile(c.ctx.sourceURL, c.ctx.downloadPath, p)
+	p := &progress.WriteCounter{}
+	kernelPath, err := utils.DownloadFile(c.ctx.tarballURL, c.ctx.downloadPath, p)
 
 	if err != nil {
 		return err
 	}
 
-	c.logger.Info("Kernel archive path: %s\n", kernelPath)
+	c.logger.Info("Downloaded Linux kernel tarball to: %s", kernelPath)
 	c.ctx.archivePath = kernelPath
 
 	return nil

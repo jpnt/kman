@@ -19,6 +19,8 @@ type ExtractCommand struct {
 var _ ICommand = (*ExtractCommand)(nil)
 
 func (c *ExtractCommand) Execute() error {
+	c.logger.Info("Extracting Linux kernel archive: %s", c.ctx.archivePath)
+
 	if c.ctx.archivePath == "" {
 		return fmt.Errorf("cannot extract kernel: kernel archive not found")
 	}
@@ -28,7 +30,7 @@ func (c *ExtractCommand) Execute() error {
 		return err
 	}
 
-	c.logger.Info("Kernel directory: %s\n", extractPath)
+	c.logger.Info("Extracted Linux kernel to: %s", extractPath)
 	c.ctx.directory = extractPath
 
 	return nil

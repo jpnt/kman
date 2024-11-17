@@ -8,7 +8,6 @@ and configurations available of your system.
 ## Features
 
 - Cross-distro compatibility
-- No external dependencies
 - Support for multiple bootloaders
 - Support for multiple initramfs generators
 - Distributed compilation (distcc)
@@ -16,14 +15,14 @@ and configurations available of your system.
 
 ### Bootloaders
 
-- [x] GNU grub
+- [ ] GNU grub
 - [ ] systemd-boot
 - [ ] limine
 - [ ] rEFInd
 
 ### Initramfs Generators
 
-- [x] dracut
+- [ ] dracut
 - [ ] mkinitcpio
 - [ ] initramfs-tools
 - [ ] booster
