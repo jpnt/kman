@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	l := logger.NewLogger()
+	l := logger.NewLogger(logger.InfoLevel)
 	b := kernel.NewKernelBuilder(l)
 
 	// TODO: dynamic argument builder configuration

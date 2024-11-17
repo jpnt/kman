@@ -9,13 +9,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"kman/pkg/progress"
 )
 
 func ConfirmAction(prompt string) bool {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(prompt + " ")
+	fmt.Print(prompt + " (Y/n) ")
 
 	input, err := reader.ReadString('\n')
 	if err != nil {
@@ -24,7 +25,7 @@ func ConfirmAction(prompt string) bool {
 	}
 
 	input = strings.TrimSpace(input)
-	return strings.ToLower(input) == "y"
+	return strings.ToLower(input) == "y" || input == ""
 }
 
 func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
@@ -70,7 +71,6 @@ func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
 	}
 
 	p.Finish()
-	fmt.Printf("Saved file to: %s\n", filePath)
 	return filePath, nil
 }
 
@@ -102,4 +102,30 @@ func UncompressFile(filePath, extractDir string) error {
 	}
 
 	return nil
+}
+
+func IsPackageInstalled(pkg string) bool {
+	_, err := exec.LookPath(pkg)
+
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	return true
+}
+
+func ShowSpinner(done chan bool) {
+	spinner := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+	for {
+		select {
+		case <-done:
+			return
+		default:
+			for _, s := range spinner {
+				fmt.Printf("\r%s", s)
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+	}
 }

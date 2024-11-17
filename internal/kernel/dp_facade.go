@@ -1,7 +1,6 @@
 package kernel
 
 import (
-	"kman/internal/pkg"
 	"kman/pkg/logger"
 )
 
@@ -10,14 +9,25 @@ type IKernelFacade interface {
 }
 
 type KernelFacade struct {
-	logger	*logger.Logger
-	cmds	*pkg.CommandManager
+	logger *logger.Logger
+	cmds   *CommandManager
+	ctx    *KernelContext
 }
 
-func NewKernelFacade(l *logger.Logger, cm *pkg.CommandManager) *KernelFacade {
+type KernelContext struct {
+	sourceURL    string
+	downloadPath string
+	archivePath  string
+	directory    string
+}
+
+// Ensure struct implements interface
+var _ IKernelFacade = (*KernelFacade)(nil)
+
+func NewKernelFacade(l *logger.Logger, cm *CommandManager) *KernelFacade {
 	return &KernelFacade{
 		logger: l,
-		cmds: cm,
+		cmds:   cm,
 	}
 }
 

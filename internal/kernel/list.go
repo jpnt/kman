@@ -1,16 +1,64 @@
 package kernel
 
+// TODO: refactor: this looks super ugly but it works since the beginning :P
+
 import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"kman/pkg/logger"
+	"kman/pkg/utils"
 	"net/http"
 	"regexp"
 )
 
-const (
-	kernelFeed = "https://www.kernel.org/feeds/kdist.xml"
-)
+type ListCommand struct {
+	logger *logger.Logger
+	ctx    *KernelContext
+}
+
+// Ensure struct implements interface
+var _ ICommand = (*ListCommand)(nil)
+
+func (c *ListCommand) Execute() error {
+	kernels, err := fetchKernels()
+	if err != nil {
+		return err
+	}
+
+	for i, kernel := range kernels {
+		fmt.Printf("[%d]: %s\n", i, kernel.Title)
+	}
+
+	n_kernels := len(kernels) - 1
+	var selectedIndex int
+	for {
+		fmt.Printf("Please select a kernel to download (0-%d): ", n_kernels)
+		_, err := fmt.Scanf("%d", &selectedIndex)
+		if err != nil {
+			fmt.Println("Invalid input. Please enter a valid number.")
+			continue
+		}
+
+		if selectedIndex >= 0 && selectedIndex <= n_kernels {
+			break
+		} else {
+			fmt.Printf("Please enter a valid number between 0 and %d.\n", n_kernels)
+		}
+	}
+
+	selectedKernel := kernels[selectedIndex]
+
+	err = validateKernel(selectedKernel)
+	if err != nil {
+		return err
+	}
+
+	c.logger.Info("Kernel source URL: %s\n", selectedKernel.SourceTarball)
+	c.ctx.sourceURL = selectedKernel.SourceTarball
+
+	return nil
+}
 
 type RSS struct {
 	Channel Channel `xml:"channel"`
@@ -38,21 +86,22 @@ type Kernel struct {
 	ChangeLog     string
 }
 
-func ListKernels() ([]Kernel, error) {
-	kernels, err := fetchKernels()
-	if err != nil {
-		return nil, err
+func validateKernel(k Kernel) error {
+	if k.PGPSignature == "" {
+		if !utils.ConfirmAction("This kernel tarball does not have a PGP signature. Are you okay with this?") {
+			return fmt.Errorf("user declined to install without PGP signature.")
+		}
 	}
 
-	for i, kernel := range kernels {
-		fmt.Printf("[%d]: %s\n", i, kernel.Title)
+	if k.SourceTarball == "" {
+		return fmt.Errorf("source tarball not found for this kernel: %+v\n", k)
 	}
 
-	return kernels, nil
+	return nil
 }
 
 func fetchKernels() ([]Kernel, error) {
-	resp, err := http.Get(kernelFeed)
+	resp, err := http.Get("https://www.kernel.org/feeds/kdist.xml")
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch kernel feed: %w", err)
 	}

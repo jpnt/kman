@@ -1,18 +1,26 @@
-package pkg
+package kernel
 
-type Command interface {
+type ICommand interface {
 	Execute() error
 }
 
-type CommandManager struct {
-	commands []Command
+type ICommandManager interface {
+	AddCommand(ICommand)
+	ExecuteAll() error
 }
+
+type CommandManager struct {
+	commands []ICommand
+}
+
+// Ensure struct implements interface
+var _ ICommandManager = (*CommandManager)(nil)
 
 func NewCommandManager() *CommandManager {
 	return &CommandManager{}
 }
 
-func (cm *CommandManager) AddCommand(cmd Command) {
+func (cm *CommandManager) AddCommand(cmd ICommand) {
 	cm.commands = append(cm.commands, cmd)
 }
 

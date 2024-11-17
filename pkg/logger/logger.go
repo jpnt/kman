@@ -2,39 +2,53 @@ package logger
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
+	"time"
 )
 
-/// Usage:
-///	log := logger.NewLogger()
-///
-///	log.Info("This is an info message.")
-///	log.Warn("This is an warning message.")
-///	log.Error("This is an error message.")
-
-type Logger struct {
-	log *logrus.Logger
+type ILogger interface {
+	Info(format string, args ...interface{})
+	Warn(format string, args ...interface{})
+	Error(format string, args ...interface{})
 }
 
-func NewLogger() *Logger {
-	log := logrus.New()
-	log.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp: true,
-		TimestampFormat: "2006-01-02 15:04:05",
-	})
-	log.SetLevel(logrus.InfoLevel)
+type Logger struct {
+	level LogLevel
+}
 
-	return &Logger{log: log}
+var _ ILogger = (*Logger)(nil)
+
+type LogLevel int
+
+const (
+	InfoLevel LogLevel = iota
+	WarnLevel
+	ErrorLevel
+)
+
+func NewLogger(l LogLevel) *Logger {
+	return &Logger{level: l}
 }
 
 func (l *Logger) Info(format string, args ...interface{}) {
-	l.log.Info(fmt.Sprintf(format, args...))
+	if l.level <= InfoLevel {
+		l.log("INFO", "\033[32m", format, args...)
+	}
 }
 
 func (l *Logger) Warn(format string, args ...interface{}) {
-	l.log.Warn(fmt.Sprintf(format, args...))
+	if l.level <= WarnLevel {
+		l.log("WARN", "\033[33m", format, args...) // Yellow for warn
+	}
 }
 
 func (l *Logger) Error(format string, args ...interface{}) {
-	l.log.Error(fmt.Sprintf(format, args...))
+	if l.level <= ErrorLevel {
+		l.log("ERROR", "\033[31m", format, args...) // Red for error
+	}
+}
+
+func (l *Logger) log(level, color, format string, args ...interface{}) {
+	timestamp := time.Now().Format("2006-01-02 15:04:05")
+	message := fmt.Sprintf(format, args...)
+	fmt.Printf("%s [%s] %s%s\033[0m\n", timestamp, level, color, message)
 }
