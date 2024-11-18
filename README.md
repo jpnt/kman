@@ -7,26 +7,20 @@ and configurations available of your system.
 
 ## Features
 
-- Cross-distro compatibility
-- Incremental update/build a Linux kernel version
-- Support multiple bootloaders configuration
-- Support multiple initramfs generators
-- Distributed compilation (distcc)
-- Support modprobed-db to reduce compilation time
-
-### Bootloaders
-
-- [ ] GNU grub
-- [ ] systemd-boot
-- [ ] limine
-- [ ] rEFInd
-
-### Initramfs Generators
-
-- [ ] dracut
-- [ ] mkinitcpio
-- [ ] initramfs-tools
-- [ ] booster
+- [ ] Cross-distro compatibility
+- [ ] Incremental update/build a Linux kernel version
+- [ ] Support multiple bootloaders configuration
+    - [ ] GNU grub
+    - [ ] systemd-boot
+    - [ ] limine
+    - [ ] rEFInd
+- [ ] Support multiple initramfs generators
+    - [ ] dracut
+    - [ ] mkinitcpio
+    - [ ] initramfs-tools
+    - [ ] booster
+- [ ] Distributed compilation (distcc)
+- [ ] Support modprobed-db to reduce compilation time
 
 ### Project Structure
 
