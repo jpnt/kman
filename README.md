@@ -1,17 +1,18 @@
 # kman (Linux Kernel Manager)
 
 kman aims to automate the Linux Kernel installation from source process, allowing for a
-repeatable way of downloading, compiling, installing, configuring, patching,
+repeatable way of downloading, configuring, patching, compiling, installing,
 generating a initramfs image and configuring the bootloader, based on the tools 
 and configurations available of your system.
 
 ## Features
 
 - Cross-distro compatibility
-- Support for multiple bootloaders
-- Support for multiple initramfs generators
+- Incremental update/build a Linux kernel version
+- Support multiple bootloaders configuration
+- Support multiple initramfs generators
 - Distributed compilation (distcc)
-- Incremental builds
+- Support modprobed-db to reduce compilation time
 
 ### Bootloaders
 

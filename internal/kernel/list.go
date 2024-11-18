@@ -54,9 +54,7 @@ func (c *ListCommand) Execute() error {
 		return err
 	}
 
-	if selectedKernel.PGPSignature == "" {
-		c.ctx.skipVerify = true
-	} else {
+	if selectedKernel.PGPSignature != "" {
 		c.ctx.signatureURL = selectedKernel.PGPSignature
 	}
 

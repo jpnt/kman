@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"kman/pkg/logger"
 	"kman/pkg/progress"
@@ -20,13 +19,9 @@ type VerifyCommand struct {
 var _ ICommand = (*VerifyCommand)(nil)
 
 func (c *VerifyCommand) Execute() error {
-	if c.ctx.skipVerify {
-		c.logger.Warn("Skipped verify PGP signature command")
-		return nil
-	}
-
 	if c.ctx.signatureURL == "" {
-		return fmt.Errorf("empty signature.")
+		c.logger.Warn("Skipping verify PGP signature command")
+		return nil
 	}
 
 	pb := &progress.WriteCounter{}
@@ -57,8 +52,8 @@ func verifyKernelPGPSignature(signaturePath, kernelPath string) error {
 		return err
 	}
 
-	if !strings.HasSuffix(kernelPath, ".tar.xz") {
-		return fmt.Errorf("the kernel archive is not *.tar.xz")
+	if filepath.Ext(kernelPath) != ".xz" {
+		return fmt.Errorf("the kernel archive is not *.xz")
 	}
 
 	unxzCmd := exec.Command("xz", "-cd", kernelPath)

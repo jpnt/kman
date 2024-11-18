@@ -27,10 +27,11 @@ type KernelBuilder struct {
 var _ IKernelBuilder = (*KernelBuilder)(nil)
 
 func NewKernelBuilder(l *logger.Logger) *KernelBuilder {
+	sharedCtx := &KernelContext{}
 	return &KernelBuilder{
 		logger: l,
 		cmds:   NewCommandManager(),
-		ctx:    &KernelContext{},
+		ctx:    sharedCtx,
 	}
 }
 
@@ -90,5 +91,5 @@ func (kb *KernelBuilder) WithDefault() *KernelBuilder {
 }
 
 func (kb *KernelBuilder) Build() *KernelFacade {
-	return NewKernelFacade(kb.logger, kb.cmds)
+	return NewKernelFacade(kb.logger, kb.cmds, kb.ctx)
 }
