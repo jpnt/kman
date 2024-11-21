@@ -21,7 +21,7 @@ type KernelContext struct {
 	archivePath   string
 	directory     string
 	signatureURL  string
-	configOption  string
+	configOptions []string
 	oldConfigPath string
 }
 

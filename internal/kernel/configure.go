@@ -17,38 +17,44 @@ type ConfigureCommand struct {
 
 var _ ICommand = (*ConfigureCommand)(nil)
 
-var defaultOption = "defconfig"
-var options = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
+var defaultOptions = []string{"defconfig"}
+var validOptions = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
 
 func (c *ConfigureCommand) Execute() error {
-	if c.ctx.configOption == "" {
-		c.ctx.configOption = defaultOption
+	if c.ctx.configOptions == nil {
+		c.logger.Info("No config options were detected, setting up default options ...")
+		c.ctx.configOptions = defaultOptions
 	}
 
-	if !isValidOption(c.ctx.configOption) {
-		return fmt.Errorf("invalid configuration option: %s", c.ctx.configOption)
+	configOptions := c.ctx.configOptions
+	for _, opt := range configOptions {
+		if !isValidOption(opt) {
+			return fmt.Errorf("invalid configuration option: %s", opt)
+		}
 	}
 
 	if err := c.copyOldConfig(); err != nil {
 		return fmt.Errorf("failed to copy .config: %w", err)
 	}
 
-	c.logger.Info("Configuring Linux kernel with: make %s", c.ctx.configOption)
+	c.logger.Info("Configuring Linux kernel with: %v ...", configOptions)
 
-	if err := os.Chdir(c.ctx.directory); err != nil {
-		return fmt.Errorf("failed to change directory to %s: %w", c.ctx.directory, err)
+	dir := c.ctx.directory
+	if err := os.Chdir(dir); err != nil {
+		return fmt.Errorf("failed to change directory to %s: %w", dir, err)
 	}
 
-	cmd := exec.Command("make", c.ctx.configOption)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	for _, opt := range configOptions {
+		cmd := exec.Command("make", opt)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("kernel configuration failed: %w", err)
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("kernel configuration failed: %w", err)
+		}
 	}
 
 	c.logger.Info("Configured Linux kernel")
-
 	return nil
 }
 
@@ -75,7 +81,7 @@ func (c *ConfigureCommand) copyOldConfig() error {
 }
 
 func isValidOption(option string) bool {
-	for _, validOption := range options {
+	for _, validOption := range validOptions {
 		if option == validOption {
 			return true
 		}

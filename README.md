@@ -8,7 +8,7 @@ and configurations available of your system.
 ## Features
 
 - [ ] Cross-distro compatibility
-- [ ] Incremental update/build a Linux kernel version
+- [ ] Incremental updates via patching
 - [ ] Support multiple bootloaders configuration
     - [ ] GNU grub
     - [ ] systemd-boot
