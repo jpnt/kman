@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
+	// "strings"
 
 	"kman/pkg/logger"
+	// "kman/pkg/spinner"
 	"kman/pkg/utils"
 )
 
@@ -34,26 +35,23 @@ func (c *ExtractCommand) Execute() error {
 		return fmt.Errorf("archive file does not exist: %s", archivePath)
 	}
 
-	uncompressDir := filepath.Dir(archivePath)
+	// uncompressDir := filepath.Dir(archivePath)
 
 	// Guessing expected extracted kernel directory from filename
-	extractedPath := strings.TrimSuffix(archivePath, filepath.Ext(archivePath))
-	extractedPath = strings.TrimSuffix(extractedPath, filepath.Ext(extractedPath))
+	// extractedPath := strings.TrimSuffix(archivePath, filepath.Ext(archivePath))
+	// extractedPath = strings.TrimSuffix(extractedPath, filepath.Ext(extractedPath))
 
 	// TEST: let the extract tool deal with it...
 	// if _, err := os.Stat(extractedPath); err == nil {
-		// c.logger.Info("Kernel already extracted: %s", extractedPath)
-		// c.ctx.directory = extractedPath
-		// return nil
+	// c.logger.Info("Kernel already extracted: %s", extractedPath)
+	// c.ctx.directory = extractedPath
+	// return nil
 	// }
-
-	// done := make(chan bool)
-	// go utils.ShowSpinner(done)
-	// defer func() { done <- true }()
 
 	// TODO: extractedPath should be result of UncompressFile instead of
 	// guessing. Also instead of utils.ShowSpinner in a coroutine do it better.
-	if err := utils.UncompressFile(archivePath, uncompressDir); err != nil {
+	extractedPath, err := utils.UncompressFile(archivePath, filepath.Dir(archivePath))
+	if err != nil {
 		return fmt.Errorf("failed to uncompress archive: %w", err)
 	}
 	c.logger.Info("Extracted Linux kernel: %s", extractedPath)
@@ -62,7 +60,7 @@ func (c *ExtractCommand) Execute() error {
 	if err := utils.RemoveFile(archivePath); err != nil {
 		return fmt.Errorf("failed to remove archive: %w", err)
 	}
-	c.logger.Info("Extracted Linux kernel: %s", extractedPath)
+	c.logger.Info("Removed Linux kernel archive: %s", archivePath)
 
 	return nil
 }

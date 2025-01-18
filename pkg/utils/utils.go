@@ -9,7 +9,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 	"errors"
 
 	"kman/pkg/progress"
@@ -75,13 +74,13 @@ func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
 	return filePath, nil
 }
 
-func UncompressFile(filePath, extractDir string) error {
+func UncompressFile(filePath, extractDir string) (string, error) {
 	ext := filepath.Ext(filePath)
 
 	var cmd *exec.Cmd
 
 	if err := os.MkdirAll(extractDir, 0755); err != nil {
-		return fmt.Errorf("failed to create extraction directory: %v", err)
+		return "", fmt.Errorf("failed to create extraction directory: %v", err)
 	}
 
 	switch ext {
@@ -90,7 +89,7 @@ func UncompressFile(filePath, extractDir string) error {
 	case ".xz":
 		cmd = exec.Command("tar", "-xJf", filePath, "-C", extractDir)
 	default:
-		return fmt.Errorf("unsupported file extension: %s", ext)
+		return "", fmt.Errorf("unsupported file extension: %s", ext)
 	}
 
 	cmd.Stdout = os.Stdout
@@ -99,10 +98,10 @@ func UncompressFile(filePath, extractDir string) error {
 	fmt.Printf("Uncompressing: %s\n", filePath)
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to uncompress file: %v", err)
+		return "", fmt.Errorf("failed to uncompress file: %v", err)
 	}
 
-	return nil
+	return "TODO", nil
 }
 
 func RemoveFile(filePath string) error {
@@ -132,22 +131,6 @@ func IsPackageInstalled(pkg string) bool {
 
 	return true
 }
-
-// TODO: Create embeddable single file Spinner impl
-// func ShowSpinner(done chan bool) {
-	// spinner := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
-	// for {
-		// select {
-		// case <-done:
-			// return
-		// default:
-			// for _, s := range spinner {
-				// fmt.Printf("\r%s", s)
-				// time.Sleep(100 * time.Millisecond)
-			// }
-		// }
-	// }
-// }
 
 func CopyFile(src, dst string) error {
 	srcFile, err := os.Open(src)
