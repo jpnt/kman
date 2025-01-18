@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"errors"
 
 	"kman/pkg/progress"
 )
@@ -104,6 +105,23 @@ func UncompressFile(filePath, extractDir string) error {
 	return nil
 }
 
+func RemoveFile(filePath string) error {
+	info, err := os.Stat(filePath)
+	if errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("file does not exist: %s", filePath)
+	}
+
+	if info.IsDir() {
+		return fmt.Errorf("path is a directory, not a file: %s", filePath)
+	}
+
+	if err := os.Remove(filePath); err != nil {
+		return fmt.Errorf("failed to remove file: %s, error: %w", filePath, err)
+	}
+
+	return nil
+}
+
 func IsPackageInstalled(pkg string) bool {
 	_, err := exec.LookPath(pkg)
 
@@ -115,20 +133,21 @@ func IsPackageInstalled(pkg string) bool {
 	return true
 }
 
-func ShowSpinner(done chan bool) {
-	spinner := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
-	for {
-		select {
-		case <-done:
-			return
-		default:
-			for _, s := range spinner {
-				fmt.Printf("\r%s", s)
-				time.Sleep(100 * time.Millisecond)
-			}
-		}
-	}
-}
+// TODO: Create embeddable single file Spinner impl
+// func ShowSpinner(done chan bool) {
+	// spinner := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+	// for {
+		// select {
+		// case <-done:
+			// return
+		// default:
+			// for _, s := range spinner {
+				// fmt.Printf("\r%s", s)
+				// time.Sleep(100 * time.Millisecond)
+			// }
+		// }
+	// }
+// }
 
 func CopyFile(src, dst string) error {
 	srcFile, err := os.Open(src)
@@ -149,3 +168,4 @@ func CopyFile(src, dst string) error {
 
 	return nil
 }
+
