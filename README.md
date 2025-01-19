@@ -21,6 +21,7 @@ and configurations available of your system.
     - [ ] booster
 - [ ] Distributed compilation (distcc)
 - [ ] Support modprobed-db to reduce compilation time
+- [ ] Unified Kernel Image
 
 ### Project Structure
 

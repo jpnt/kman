@@ -39,7 +39,7 @@ func NewKernelFacade(l *logger.Logger, cm *CommandManager, kc *KernelContext) *K
 func (kf *KernelFacade) Run() {
 	kf.logger.Info("Executing all given commands ...")
 	if err := kf.cmds.ExecuteAll(); err != nil {
-		kf.logger.Error("failed to execute command: %s", err.Error())
+		kf.logger.Error("Command execution failed: %s", err.Error())
 		os.Exit(1)
 	}
 }

@@ -98,7 +98,7 @@ func UncompressFile(filePath, extractDir string) (string, error) {
 	fmt.Printf("Uncompressing: %s\n", filePath)
 
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to uncompress file: %v", err)
+		return "", fmt.Errorf("failed to run command: %v", err)
 	}
 
 	return "TODO", nil

@@ -14,6 +14,10 @@ type DownloadCommand struct {
 // Ensure struct implements interface
 var _ ICommand = (*DownloadCommand)(nil)
 
+func (c *DownloadCommand) String() string {
+	return "Download"
+}
+
 func (c *DownloadCommand) Execute() error {
 	c.logger.Info("Downloading Linux kernel tarball from URL: %s ...", c.ctx.tarballURL)
 

@@ -20,6 +20,10 @@ var _ ICommand = (*ConfigureCommand)(nil)
 var defaultOptions = []string{"defconfig"}
 var validOptions = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
 
+func (c *ConfigureCommand) String() string {
+	return "Configure"
+}
+
 func (c *ConfigureCommand) Execute() error {
 	if c.ctx.configOptions == nil {
 		c.logger.Info("No config options were detected, setting up default options ...")

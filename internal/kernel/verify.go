@@ -18,6 +18,10 @@ type VerifyCommand struct {
 
 var _ ICommand = (*VerifyCommand)(nil)
 
+func (c *VerifyCommand) String() string {
+	return "Verify"
+}
+
 func (c *VerifyCommand) Execute() error {
 	if c.ctx.signatureURL == "" {
 		c.logger.Warn("Skipping verify PGP signature command ...")
@@ -39,6 +43,11 @@ func (c *VerifyCommand) Execute() error {
 	if err != nil {
 		return err
 	}
+
+	if err := utils.RemoveFile(signaturePath); err != nil {
+		return fmt.Errorf("failed to remove signature file: %w", err)
+	}
+	c.logger.Info("Removed signature file: %s", signaturePath)
 
 	return nil
 }
