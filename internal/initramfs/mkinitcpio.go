@@ -1,6 +1,6 @@
 package initramfs
 
-import "kman/pkg/logger"
+import "github.com/jpnt/kman/pkg/logger"
 
 type Mkinitcpio struct {
 	logger *logger.Logger
