@@ -1,6 +1,6 @@
 package bootloader
 
-import "kman/pkg/logger"
+import "github.com/jpnt/kman/pkg/logger"
 
 type Grub struct {
 	logger *logger.Logger
