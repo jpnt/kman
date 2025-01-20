@@ -1,0 +1,23 @@
+name: CD - Release kman
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    needs: build  # only after the build job in ci.yml
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            kman-amd64
+            kman-arm64
+            kman-386
