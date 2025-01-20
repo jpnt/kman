@@ -1,7 +1,7 @@
 package kernel
 
 import (
-	"kman/pkg/logger"
+	"github.com/jpnt/kman/pkg/logger"
 )
 
 type IKernelBuilder interface {

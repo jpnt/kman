@@ -1,8 +1,9 @@
 package kernel
 
 import (
-	"kman/pkg/logger"
 	"os"
+
+	"github.com/jpnt/kman/pkg/logger"
 )
 
 type IKernelFacade interface {

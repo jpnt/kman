@@ -3,11 +3,12 @@ package kernel
 import (
 	"errors"
 	"fmt"
-	"kman/pkg/logger"
-	"kman/pkg/utils"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/jpnt/kman/pkg/logger"
+	"github.com/jpnt/kman/pkg/utils"
 )
 
 type ConfigureCommand struct {

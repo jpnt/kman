@@ -1,8 +1,8 @@
 package main
 
 import (
-	"kman/internal/kernel"
-	"kman/pkg/logger"
+	"github.com/jpnt/kman/internal/kernel"
+	"github.com/jpnt/kman/pkg/logger"
 )
 
 func main() {

@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"kman/pkg/logger"
-	"kman/pkg/utils"
+	"github.com/jpnt/kman/pkg/logger"
+	"github.com/jpnt/kman/pkg/utils"
 )
 
 type ExtractCommand struct {

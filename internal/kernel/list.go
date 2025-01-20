@@ -6,10 +6,11 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
-	"kman/pkg/logger"
-	"kman/pkg/utils"
 	"net/http"
 	"regexp"
+
+	"github.com/jpnt/kman/pkg/logger"
+	"github.com/jpnt/kman/pkg/utils"
 )
 
 type ListCommand struct {

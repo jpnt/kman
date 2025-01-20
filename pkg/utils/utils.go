@@ -11,7 +11,7 @@ import (
 	"strings"
 	"errors"
 
-	"kman/pkg/progress"
+	"github.com/jpnt/kman/pkg/progress"
 )
 
 func ConfirmAction(prompt string) bool {

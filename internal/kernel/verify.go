@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"kman/pkg/logger"
-	"kman/pkg/progress"
-	"kman/pkg/utils"
+	"github.com/jpnt/kman/pkg/logger"
+	"github.com/jpnt/kman/pkg/progress"
+	"github.com/jpnt/kman/pkg/utils"
 )
 
 type VerifyCommand struct {
