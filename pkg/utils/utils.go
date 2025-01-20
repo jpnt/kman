@@ -28,23 +28,34 @@ func ConfirmAction(prompt string) bool {
 	return strings.ToLower(input) == "y" || input == ""
 }
 
+func FileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
 func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
 	// Get file name and create full path
-	filePath := filepath.Join(destPath, filepath.Base(url))
+	result := filepath.Join(destPath, filepath.Base(url))
+	result, err := filepath.Abs(result)
+	if err != nil {
+		return "", fmt.Errorf("error resolving absolute path: %w", err)
+	}
 
 	// Ensure destination directory exists
-	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(result), 0755); err != nil {
 		return "", fmt.Errorf("error creating directory: %w", err)
 	}
 
-	// If file already exists then return
-	if _, err := os.Stat(filePath); err == nil {
-		fmt.Printf("File already exists: %s\n", filePath)
-		return filePath, nil
+	if FileExists(result) {
+		fmt.Printf("File already exists: %s\n", result)
+		return result, nil
 	}
 
 	// Open file for writing
-	outFile, err := os.Create(filePath)
+	outFile, err := os.Create(result)
 	if err != nil {
 		return "", fmt.Errorf("error creating file: %w", err)
 	}
@@ -71,37 +82,79 @@ func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
 	}
 
 	p.Finish()
-	return filePath, nil
+	return result, nil
 }
 
-func UncompressFile(filePath, extractDir string) (string, error) {
-	ext := filepath.Ext(filePath)
-
+func UncompressFile(archivePath, extractDir string) ([]string, error) {
+	extension := filepath.Ext(archivePath)
 	var cmd *exec.Cmd
 
-	if err := os.MkdirAll(extractDir, 0755); err != nil {
-		return "", fmt.Errorf("failed to create extraction directory: %v", err)
+	if _, err := os.Stat(archivePath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("archive file does not exist: %s", archivePath)
 	}
 
-	switch ext {
+	if err := os.MkdirAll(extractDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create extraction directory: %v", err)
+	}
+
+	beforeFiles, err := listFiles(extractDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list files before extraction: %w", err)
+	}
+
+	switch extension {
 	case ".gz":
-		cmd = exec.Command("tar", "-xzf", filePath, "-C", extractDir)
+		cmd = exec.Command("tar", "-xzf", archivePath, "-C", extractDir)
 	case ".xz":
-		cmd = exec.Command("tar", "-xJf", filePath, "-C", extractDir)
+		cmd = exec.Command("tar", "-xJf", archivePath, "-C", extractDir)
 	default:
-		return "", fmt.Errorf("unsupported file extension: %s", ext)
+		return nil, fmt.Errorf("unsupported file extension: %s", extension)
 	}
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	fmt.Printf("Uncompressing: %s\n", filePath)
+	fmt.Printf("Uncompressing: %s\n", archivePath)
 
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to run command: %v", err)
+		return nil, fmt.Errorf("failed to run command: %v", err)
 	}
 
-	return "TODO", nil
+	afterFiles, err := listFiles(extractDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list files before extraction: %w", err)
+	}
+
+	extractedFiles := findNewFiles(beforeFiles, afterFiles)
+	if len(extractedFiles) == 0 {
+		return nil, fmt.Errorf("no files or folders extracted from archive")
+	}
+	
+	return extractedFiles, nil
+}
+
+func listFiles(dir string) (map[string]struct{}, error) {
+	files := make(map[string]struct{})
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			files[path] = struct{}{}
+		}
+		return nil
+	})
+	return files, err
+}
+
+func findNewFiles(before, after map[string]struct{}) []string {
+	newFiles := []string{}
+	for file := range after {
+		if _, exists := before[file]; !exists {
+			newFiles = append(newFiles, file)
+		}
+	}
+	return newFiles
 }
 
 func RemoveFile(filePath string) error {
