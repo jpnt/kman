@@ -7,7 +7,9 @@ and configurations available of your system.
 
 ## Features
 
-- [ ] Cross-distro compatibility
+- [x] No External Library dependencies
+- [x] Automated download of Kernel versions
+- [x] Cross-distro compatibility
 - [ ] Incremental updates via patching
 - [ ] Support multiple bootloaders configuration
     - [ ] GNU grub
