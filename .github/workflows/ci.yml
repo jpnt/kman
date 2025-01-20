@@ -31,7 +31,7 @@ jobs:
     
       - name: Build
         run: |
-          GOARCH=${{ matrix.architecture }} GOOS=linux go build -o kman-${{ matrix.architecture }}
+          GOARCH=${{ matrix.architecture }} GOOS=linux go build -v -o kman-${{ matrix.architecture }} ./cmd/kman/kman.go
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
