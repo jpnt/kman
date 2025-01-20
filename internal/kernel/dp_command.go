@@ -1,7 +1,10 @@
 package kernel
 
+import "fmt"
+
 type ICommand interface {
 	Execute() error
+	fmt.Stringer
 }
 
 type ICommandManager interface {
@@ -27,7 +30,7 @@ func (cm *CommandManager) AddCommand(cmd ICommand) {
 func (cm *CommandManager) ExecuteAll() error {
 	for _, cmd := range cm.commands {
 		if err := cmd.Execute(); err != nil {
-			return err
+			return fmt.Errorf("%s: %w", cmd, err)
 		}
 	}
 	return nil

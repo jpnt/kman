@@ -20,6 +20,10 @@ type ListCommand struct {
 // Ensure struct implements interface
 var _ ICommand = (*ListCommand)(nil)
 
+func (c *ListCommand) String() string {
+	return "List"
+}
+
 func (c *ListCommand) Execute() error {
 	kernels, err := fetchKernels()
 	if err != nil {
