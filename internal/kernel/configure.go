@@ -22,7 +22,7 @@ var defaultOptions = []string{"defconfig"}
 var validOptions = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
 
 func (c *ConfigureCommand) String() string {
-	return "Configure"
+	return "[ConfigureCommand]"
 }
 
 func (c *ConfigureCommand) Execute() error {

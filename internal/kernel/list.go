@@ -22,7 +22,7 @@ type ListCommand struct {
 var _ ICommand = (*ListCommand)(nil)
 
 func (c *ListCommand) String() string {
-	return "List"
+	return "[ListCommand]"
 }
 
 func (c *ListCommand) Execute() error {

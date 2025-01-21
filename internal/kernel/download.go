@@ -15,7 +15,7 @@ type DownloadCommand struct {
 var _ ICommand = (*DownloadCommand)(nil)
 
 func (c *DownloadCommand) String() string {
-	return "Download"
+	return "[DownloadCommand]"
 }
 
 func (c *DownloadCommand) Execute() error {

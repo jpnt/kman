@@ -3,8 +3,8 @@ package kernel
 import "fmt"
 
 type ICommand interface {
+	fmt.Stringer  // enforce String() implementation
 	Execute() error
-	fmt.Stringer
 }
 
 type ICommandManager interface {

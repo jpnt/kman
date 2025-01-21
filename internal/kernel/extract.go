@@ -18,7 +18,7 @@ type ExtractCommand struct {
 var _ ICommand = (*ExtractCommand)(nil)
 
 func (c *ExtractCommand) String() string {
-	return "Extract"
+	return "[ExtractCommand]"
 }
 
 func (c *ExtractCommand) Execute() error {

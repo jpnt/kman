@@ -19,7 +19,7 @@ type VerifyCommand struct {
 var _ ICommand = (*VerifyCommand)(nil)
 
 func (c *VerifyCommand) String() string {
-	return "Verify"
+	return "[VerifyCommand]"
 }
 
 func (c *VerifyCommand) Execute() error {

@@ -25,46 +25,6 @@ and configurations available of your system.
 - [ ] Support modprobed-db to reduce compilation time
 - [ ] Unified Kernel Image
 
-### Project Structure
-
-```
-kman/
-|_ cmd/
-|    |_ kman/
-|        |_ kman.go
-|_ internal/
-|    |_ app
-|         |_ bootloader
-|         |    |_ dp_strategy.go
-|         |    |_ grub.go
-|         |    |_ systemd-boot.go
-|         |    |_ limine.go
-|         |   
-|         |_ initramfs
-|         |    |_ dp_strategy.go
-|         |    |_ dracut.go
-|         |    |_ mkinitcpio.go
-|         |    |_ booster.go
-|         |   
-|         |_ kernel
-|              |_ dp_facade.go
-|              |_ dp_builder.go
-|              |_ dp_command.go
-|              |_ download.go
-|              |_ verify.go
-|              |_ configure.go
-|              |_ compile.go
-|              |_ install.go
-|              |_ remove.go
-|_ pkg
-    |_ logger
-    |    |_ logger.go
-    |_ progress
-    |    |_ progress.go
-    |_ utils
-         |_ utils.go
-```
-
 ### Design Patterns
 
 Strategy Pattern: The strategy lets the algorithm vary independently from clients

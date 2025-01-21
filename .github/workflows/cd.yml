@@ -14,6 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4 
 
+      - name: Strip Binaries
+        run: |
+          strip --strip-unneeded kman-*
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
