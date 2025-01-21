@@ -85,21 +85,16 @@ func DownloadFile(url, destPath string, p progress.Progress) (string, error) {
 	return result, nil
 }
 
-func UncompressFile(archivePath, extractDir string) ([]string, error) {
+func UncompressFile(archivePath, extractDir string) error {
 	extension := filepath.Ext(archivePath)
 	var cmd *exec.Cmd
 
 	if _, err := os.Stat(archivePath); os.IsNotExist(err) {
-		return nil, fmt.Errorf("archive file does not exist: %s", archivePath)
+		return fmt.Errorf("archive file does not exist: %s", archivePath)
 	}
 
 	if err := os.MkdirAll(extractDir, 0755); err != nil {
-		return nil, fmt.Errorf("failed to create extraction directory: %v", err)
-	}
-
-	beforeFiles, err := listFiles(extractDir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to list files before extraction: %w", err)
+		return fmt.Errorf("failed to create extraction directory: %v", err)
 	}
 
 	switch extension {
@@ -108,7 +103,7 @@ func UncompressFile(archivePath, extractDir string) ([]string, error) {
 	case ".xz":
 		cmd = exec.Command("tar", "-xJf", archivePath, "-C", extractDir)
 	default:
-		return nil, fmt.Errorf("unsupported file extension: %s", extension)
+		return fmt.Errorf("unsupported file extension: %s", extension)
 	}
 
 	cmd.Stdout = os.Stdout
@@ -117,44 +112,10 @@ func UncompressFile(archivePath, extractDir string) ([]string, error) {
 	fmt.Printf("Uncompressing: %s\n", archivePath)
 
 	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("failed to run command: %v", err)
-	}
-
-	afterFiles, err := listFiles(extractDir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to list files before extraction: %w", err)
-	}
-
-	extractedFiles := findNewFiles(beforeFiles, afterFiles)
-	if len(extractedFiles) == 0 {
-		return nil, fmt.Errorf("no files or folders extracted from archive")
+		return fmt.Errorf("failed to run command: %v", err)
 	}
 	
-	return extractedFiles, nil
-}
-
-func listFiles(dir string) (map[string]struct{}, error) {
-	files := make(map[string]struct{})
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			files[path] = struct{}{}
-		}
-		return nil
-	})
-	return files, err
-}
-
-func findNewFiles(before, after map[string]struct{}) []string {
-	newFiles := []string{}
-	for file := range after {
-		if _, exists := before[file]; !exists {
-			newFiles = append(newFiles, file)
-		}
-	}
-	return newFiles
+	return nil
 }
 
 func RemoveFile(filePath string) error {

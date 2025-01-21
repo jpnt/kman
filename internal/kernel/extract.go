@@ -31,8 +31,8 @@ func (c *ExtractCommand) Execute() error {
 	extractedPath = strings.TrimSuffix(extractedPath, filepath.Ext(extractedPath))
 	
 	c.logger.Info("Extracting Linux kernel archive: %s ...", archivePath)
-	_, err := utils.UncompressFile(archivePath, filepath.Dir(archivePath))
-	if err != nil {
+	err := utils.UncompressFile(archivePath, filepath.Dir(archivePath))
+	if  err != nil {
 		return fmt.Errorf("failed to uncompress archive: %w", err)
 	}
 
