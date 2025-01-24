@@ -35,6 +35,9 @@ jobs:
         run: |
           GOARCH=${{ matrix.architecture }} GOOS=linux go build -v -o kman-${{ matrix.architecture }} ./cmd/kman/kman.go
 
+      - name: List files in current working directory
+        run: ls -alh
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -49,10 +52,17 @@ jobs:
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
+      
+      - name: List files in current working directory
+        run: ls -alh
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: kman-*
+          files: |
+            kman-amd64
+            kman-arm64
+            kman-386
+            kman-riscv64
           token: ${{ secrets.RELEASE_PAT }}
 
