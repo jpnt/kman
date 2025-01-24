@@ -35,6 +35,10 @@ jobs:
         run: |
           GOARCH=${{ matrix.architecture }} GOOS=linux go build -v -o kman-${{ matrix.architecture }} ./cmd/kman/kman.go
 
+      - name: Strip Binaries
+        run: |
+          strip --strip-unneeded kman-*
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -52,10 +56,6 @@ jobs:
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
-
-      - name: Strip Binaries
-        run: |
-          strip --strip-unneeded kman-*
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
