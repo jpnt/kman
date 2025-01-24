@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/jpnt/kman/internal/kernel"
 	"github.com/jpnt/kman/pkg/logger"
 )
@@ -14,7 +16,10 @@ func main() {
 	b = b.WithDefault()
 	// else:
 	// b = b.WithArguments(args)
-	f := b.Build()
 
-	f.Run()
+	f, _ := b.Build()
+
+	if f.Run() != nil {
+		os.Exit(1)
+	}
 }
