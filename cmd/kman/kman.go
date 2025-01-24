@@ -16,7 +16,6 @@ func main() {
 	b = b.WithDefault()
 	// else:
 	// b = b.WithArguments(args)
-
 	f, _ := b.Build()
 
 	if f.Run() != nil {
