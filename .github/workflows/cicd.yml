@@ -53,10 +53,6 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            kman-amd64
-            kman-arm64
-            kman-386
-            kman-riscv64
+          files: kman-*
           token: ${{ secrets.RELEASE_PAT }}
 
