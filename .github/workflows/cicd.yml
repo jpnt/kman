@@ -47,9 +47,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Download build artifacts
         uses: actions/download-artifact@v3
 
@@ -61,4 +58,5 @@ jobs:
             kman-arm64
             kman-386
             kman-riscv64
+          token: ${{ secrets.RELEASE_PAT }}
 
