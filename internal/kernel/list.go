@@ -38,7 +38,7 @@ func (c *ListCommand) Execute() error {
 	n_kernels := len(kernels) - 1
 	var selectedIndex int
 	for {
-		fmt.Printf("Please select a kernel to download (0-%d): ", n_kernels)
+		fmt.Printf("Select a kernel to download (0-%d): ", n_kernels)
 		_, err := fmt.Scanf("%d", &selectedIndex)
 		if err != nil {
 			fmt.Println("Invalid input. Please enter a valid number.")

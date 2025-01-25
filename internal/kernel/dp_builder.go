@@ -32,7 +32,7 @@ func NewKernelBuilder(l *logger.Logger) IKernelBuilder {
 	sharedCtx := &KernelContext{}
 	return &KernelBuilder{
 		logger: l,
-		cm:   NewCommandManager(),
+		cm:     NewCommandManager(),
 		ctx:    sharedCtx,
 	}
 }
