@@ -11,40 +11,40 @@ import (
 	"github.com/jpnt/kman/pkg/utils"
 )
 
-type ConfigureCommand struct {
+type ConfigureStep struct {
 	logger *logger.Logger
 	ctx    *KernelContext
 }
 
-var _ ICommand = (*ConfigureCommand)(nil)
+var _ IStep = (*ConfigureStep)(nil)
 
 var defaultOptions = []string{"defconfig"}
 var validOptions = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
 
-func (c *ConfigureCommand) String() string {
-	return "[ConfigureCommand]"
+func (s *ConfigureStep) String() string {
+	return "[ConfigureStep]"
 }
 
-func (c *ConfigureCommand) Execute() error {
-	if c.ctx.configOptions == nil {
-		c.logger.Info("No config options were detected, setting up default options ...")
-		c.ctx.configOptions = defaultOptions
+func (s *ConfigureStep) Execute() error {
+	if s.ctx.configOptions == nil {
+		s.logger.Info("No config options were detected, setting up default options ...")
+		s.ctx.configOptions = defaultOptions
 	}
 
-	configOptions := c.ctx.configOptions
+	configOptions := s.ctx.configOptions
 	for _, opt := range configOptions {
 		if !isValidOption(opt) {
 			return fmt.Errorf("invalid configuration option: %s", opt)
 		}
 	}
 
-	if err := c.copyOldConfig(); err != nil {
+	if err := s.copyOldConfig(); err != nil {
 		return fmt.Errorf("failed to copy .config: %w", err)
 	}
 
-	c.logger.Info("Configuring Linux kernel with: %v ...", configOptions)
+	s.logger.Info("Configuring Linux kernel with: %v ...", configOptions)
 
-	dir := c.ctx.directory
+	dir := s.ctx.directory
 	if err := os.Chdir(dir); err != nil {
 		return fmt.Errorf("failed to change directory to %s: %w", dir, err)
 	}
@@ -59,26 +59,26 @@ func (c *ConfigureCommand) Execute() error {
 		}
 	}
 
-	c.logger.Info("Configured Linux kernel")
+	s.logger.Info("Configured Linux kernel")
 	return nil
 }
 
-func (c *ConfigureCommand) copyOldConfig() error {
-	if c.ctx.oldConfigPath == "" {
-		c.logger.Warn("Skipping copy of old .config file")
+func (s *ConfigureStep) copyOldConfig() error {
+	if s.ctx.oldConfigPath == "" {
+		s.logger.Warn("Skipping copy of old .config file")
 		return nil
 	}
 
-	oldConfigPath := filepath.Join(c.ctx.oldConfigPath)
-	newConfigPath := filepath.Join(c.ctx.directory, ".config")
+	oldConfigPath := filepath.Join(s.ctx.oldConfigPath)
+	newConfigPath := filepath.Join(s.ctx.directory, ".config")
 
 	_, err := os.Stat(oldConfigPath)
-	if errors.Is(err, os.ErrNotExist) || c.ctx.oldConfigPath == "" {
-		c.logger.Warn(".config file not found in %s, skipping copy", oldConfigPath)
+	if errors.Is(err, os.ErrNotExist) || s.ctx.oldConfigPath == "" {
+		s.logger.Warn(".config file not found in %s, skipping copy", oldConfigPath)
 		return nil
 	}
 
-	c.logger.Info("Copying .config from %s to %s", oldConfigPath, newConfigPath)
+	s.logger.Info("Copying .config from %s to %s", oldConfigPath, newConfigPath)
 	if err := utils.CopyFile(oldConfigPath, newConfigPath); err != nil {
 		return fmt.Errorf("error copying .config: %w", err)
 	}

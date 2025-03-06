@@ -13,19 +13,19 @@ import (
 	"github.com/jpnt/kman/pkg/utils"
 )
 
-type ListCommand struct {
+type ListStep struct {
 	logger *logger.Logger
 	ctx    *KernelContext
 }
 
 // Ensure struct implements interface
-var _ ICommand = (*ListCommand)(nil)
+var _ IStep = (*ListStep)(nil)
 
-func (c *ListCommand) String() string {
-	return "[ListCommand]"
+func (s *ListStep) String() string {
+	return "[ListStep]"
 }
 
-func (c *ListCommand) Execute() error {
+func (s *ListStep) Execute() error {
 	kernels, err := fetchKernels()
 	if err != nil {
 		return err
@@ -60,10 +60,10 @@ func (c *ListCommand) Execute() error {
 	}
 
 	if selectedKernel.PGPSignature != "" {
-		c.ctx.signatureURL = selectedKernel.PGPSignature
+		s.ctx.signatureURL = selectedKernel.PGPSignature
 	}
 
-	c.ctx.tarballURL = selectedKernel.SourceTarball
+	s.ctx.tarballURL = selectedKernel.SourceTarball
 
 	return nil
 }

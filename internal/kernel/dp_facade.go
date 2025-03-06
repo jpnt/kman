@@ -1,10 +1,7 @@
 package kernel
 
 import (
-	"time"
 	"fmt"
-
-	"github.com/jpnt/kman/pkg/logger"
 )
 
 type IKernelFacade interface {
@@ -12,8 +9,7 @@ type IKernelFacade interface {
 }
 
 type KernelFacade struct {
-	logger *logger.Logger
-	cm     *CommandManager
+	pl     *Pipeline
 	ctx    *KernelContext
 }
 
@@ -30,24 +26,16 @@ type KernelContext struct {
 // Ensure struct implements interface
 var _ IKernelFacade = (*KernelFacade)(nil)
 
-func NewKernelFacade(l *logger.Logger, cm *CommandManager, kc *KernelContext) *KernelFacade {
+func NewKernelFacade(pl *Pipeline, kc *KernelContext) *KernelFacade {
 	return &KernelFacade{
-		logger: l,
-		cm:     cm,
+		pl:     pl,
 		ctx:    kc,
 	}
 }
 
 func (kf *KernelFacade) Run() error {
-	kf.logger.Info("Executing all given commands ...")
-	startTime := time.Now()
-
-	if err := kf.cm.ExecuteAll(); err != nil {
-		kf.logger.Error("Command execution failed: %s", err.Error())
+	if err := kf.pl.ExecuteAll(); err != nil {
 		return fmt.Errorf("execution failed: %w", err)
 	}
-
-	duration := time.Since(startTime).Seconds()
-	kf.logger.Info("Done. Execution time: %.2f seconds", duration)
 	return nil
 }

@@ -1,4 +1,5 @@
 # https://gist.github.com/asukakenji/f15ba7e588ac42795f421b48b8aede63
+# TODO: consider using upx to further minimize binary size
 name: CI/CD - Build, Test and Release
 
 on:
@@ -33,7 +34,7 @@ jobs:
     
       - name: Build
         run: |
-          GOARCH=${{ matrix.architecture }} GOOS=linux go build -v -o kman-${{ matrix.architecture }} ./cmd/kman/kman.go
+          GOARCH=${{ matrix.architecture }} GOOS=linux go build -ldflags="-s -w" -v -o kman-${{ matrix.architecture }} ./cmd/kman/kman.go
 
       - name: Display structure of files
         run: ls -lRha

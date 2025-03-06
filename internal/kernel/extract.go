@@ -9,20 +9,20 @@ import (
 	"github.com/jpnt/kman/pkg/utils"
 )
 
-type ExtractCommand struct {
+type ExtractStep struct {
 	logger *logger.Logger
 	ctx    *KernelContext
 }
 
 // Ensure struct implements interface
-var _ ICommand = (*ExtractCommand)(nil)
+var _ IStep = (*ExtractStep)(nil)
 
-func (c *ExtractCommand) String() string {
-	return "[ExtractCommand]"
+func (s *ExtractStep) String() string {
+	return "[ExtractStep]"
 }
 
-func (c *ExtractCommand) Execute() error {
-	archivePath := c.ctx.archivePath
+func (s *ExtractStep) Execute() error {
+	archivePath := s.ctx.archivePath
 	if archivePath == "" {
 		return fmt.Errorf("cannot extract kernel: archive path is empty")
 	}
@@ -30,7 +30,7 @@ func (c *ExtractCommand) Execute() error {
 	extractedPath := strings.TrimSuffix(archivePath, filepath.Ext(archivePath))
 	extractedPath = strings.TrimSuffix(extractedPath, filepath.Ext(extractedPath))
 	
-	c.logger.Info("Extracting Linux kernel archive: %s ...", archivePath)
+	s.logger.Info("Extracting Linux kernel archive: %s ...", archivePath)
 	err := utils.UncompressFile(archivePath, filepath.Dir(archivePath))
 	if  err != nil {
 		return fmt.Errorf("failed to uncompress archive: %w", err)
@@ -40,16 +40,16 @@ func (c *ExtractCommand) Execute() error {
 		return fmt.Errorf("expected extracted kernel path does not exist: %s", extractedPath)
 	}
 
-	c.ctx.directory, err = filepath.Abs(extractedPath)
+	s.ctx.directory, err = filepath.Abs(extractedPath)
 	if err != nil {
 		return fmt.Errorf("failed to resolve absolute path: %w", err)
 	}
-	c.logger.Info("Extracted Linux kernel to: %s", c.ctx.directory)
+	s.logger.Info("Extracted Linux kernel to: %s", s.ctx.directory)
 
 	if err := utils.RemoveFile(archivePath); err != nil {
 		return fmt.Errorf("failed to remove archive file: %w", err)
 	}
-	c.logger.Info("Removed kernel archive file: %s", archivePath)
+	s.logger.Info("Removed kernel archive file: %s", archivePath)
 
 	return nil
 }

@@ -6,30 +6,30 @@ import (
 	"github.com/jpnt/kman/pkg/utils"
 )
 
-type DownloadCommand struct {
+type DownloadStep struct {
 	logger *logger.Logger
 	ctx    *KernelContext
 }
 
 // Ensure struct implements interface
-var _ ICommand = (*DownloadCommand)(nil)
+var _ IStep = (*DownloadStep)(nil)
 
-func (c *DownloadCommand) String() string {
-	return "[DownloadCommand]"
+func (s *DownloadStep) String() string {
+	return "[DownloadStep]"
 }
 
-func (c *DownloadCommand) Execute() error {
-	c.logger.Info("Downloading Linux kernel tarball from URL: %s ...", c.ctx.tarballURL)
+func (s *DownloadStep) Execute() error {
+	s.logger.Info("Downloading Linux kernel tarball from URL: %s ...", s.ctx.tarballURL)
 
 	p := &progress.WriteCounter{}
-	kernelPath, err := utils.DownloadFile(c.ctx.tarballURL, c.ctx.downloadPath, p)
+	kernelPath, err := utils.DownloadFile(s.ctx.tarballURL, s.ctx.downloadPath, p)
 
 	if err != nil {
 		return err
 	}
 
-	c.logger.Info("Downloaded Linux kernel tarball to: %s", kernelPath)
-	c.ctx.archivePath = kernelPath
+	s.logger.Info("Downloaded Linux kernel tarball to: %s", kernelPath)
+	s.ctx.archivePath = kernelPath
 
 	return nil
 }
