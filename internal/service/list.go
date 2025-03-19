@@ -1,4 +1,4 @@
-package kernel
+package service
 
 // TODO: refactor: this looks super ugly but it works since the beginning :P
 
@@ -9,20 +9,21 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/jpnt/kman/internal/core"
 	"github.com/jpnt/kman/pkg/logger"
 	"github.com/jpnt/kman/pkg/utils"
 )
 
 type ListStep struct {
-	logger *logger.Logger
-	ctx    *KernelContext
+	log *logger.Logger
+	ctx *core.KernelContext
 }
 
 // Ensure struct implements interface
-var _ IStep = (*ListStep)(nil)
+var _ core.IStep = (*ListStep)(nil)
 
-func (s *ListStep) String() string {
-	return "[ListStep]"
+func (s *ListStep) Name() string {
+	return "list"
 }
 
 func (s *ListStep) Execute() error {
@@ -60,10 +61,10 @@ func (s *ListStep) Execute() error {
 	}
 
 	if selectedKernel.PGPSignature != "" {
-		s.ctx.signatureURL = selectedKernel.PGPSignature
+		s.ctx.SignatureURL = selectedKernel.PGPSignature
 	}
 
-	s.ctx.tarballURL = selectedKernel.SourceTarball
+	s.ctx.TarballURL = selectedKernel.SourceTarball
 
 	return nil
 }

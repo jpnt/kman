@@ -1,4 +1,6 @@
-package kernel
+package service
+
+// TODO: looks super ugly (like list.go) try to embed this into the binary?
 
 import (
 	"fmt"
@@ -6,40 +8,41 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/jpnt/kman/internal/core"
 	"github.com/jpnt/kman/pkg/logger"
 	"github.com/jpnt/kman/pkg/progress"
 	"github.com/jpnt/kman/pkg/utils"
 )
 
 type VerifyStep struct {
-	logger *logger.Logger
-	ctx    *KernelContext
+	log *logger.Logger
+	ctx *core.KernelContext
 }
 
-var _ IStep = (*VerifyStep)(nil)
+var _ core.IStep = (*VerifyStep)(nil)
 
-func (s *VerifyStep) String() string {
-	return "[VerifyStep]"
+func (s *VerifyStep) Name() string {
+	return "verify"
 }
 
 func (s *VerifyStep) Execute() error {
-	if s.ctx.signatureURL == "" {
-		s.logger.Warn("Skipping PGP signature verification step ...")
+	if s.ctx.SignatureURL == "" {
+		s.log.Warn("Skipping PGP signature verification step ...")
 		return nil
 	}
 
 	pb := &progress.WriteCounter{}
-	signaturePathDest := filepath.Dir(s.ctx.downloadPath)
+	signaturePathDest := filepath.Dir(s.ctx.DownloadPath)
 
-	s.logger.Info("Downloading signature from %s ...", s.ctx.signatureURL)
+	s.log.Info("Downloading signature from %s ...", s.ctx.SignatureURL)
 
-	signaturePath, err := utils.DownloadFile(s.ctx.signatureURL, signaturePathDest, pb)
+	signaturePath, err := utils.DownloadFile(s.ctx.SignatureURL, signaturePathDest, pb)
 	if err != nil {
 		return fmt.Errorf("failed to download signature: %w", err)
 	}
-	s.logger.Info("Downloaded signature to %s", signaturePath)
+	s.log.Info("Downloaded signature to %s", signaturePath)
 
-	err = s.verifyKernelPGPSignature(signaturePath, s.ctx.archivePath)
+	err = s.verifyKernelPGPSignature(signaturePath, s.ctx.ArchivePath)
 	if err != nil {
 		return err
 	}
@@ -47,7 +50,7 @@ func (s *VerifyStep) Execute() error {
 	if err := utils.RemoveFile(signaturePath); err != nil {
 		return fmt.Errorf("failed to remove signature file: %w", err)
 	}
-	s.logger.Info("Removed signature file: %s", signaturePath)
+	s.log.Info("Removed signature file: %s", signaturePath)
 
 	return nil
 }
@@ -56,7 +59,7 @@ var emails = []string{"torvalds@kernel.org", "gregkh@kernel.org"}
 
 // https://www.kernel.org/signature.html
 func (s *VerifyStep) verifyKernelPGPSignature(signaturePath, kernelPath string) error {
-	s.logger.Info("Verifying Linux kernel signature ...")
+	s.log.Info("Verifying Linux kernel signature ...")
 
 	err := s.importKeys(emails)
 	if err != nil {
@@ -90,13 +93,13 @@ func (s *VerifyStep) verifyKernelPGPSignature(signaturePath, kernelPath string) 
 		return fmt.Errorf("decompression failed: %v", err)
 	}
 
-	s.logger.Info("Linux kernel signature verified")
+	s.log.Info("Linux kernel signature verified")
 	return nil
 }
 
 func (s *VerifyStep) importKeys(emails []string) error {
 	for _, email := range emails {
-		s.logger.Info("Locating and importing key for %s ...", email)
+		s.log.Info("Locating and importing key for %s ...", email)
 
 		cmd := exec.Command("gpg", "--locate-keys", email)
 		cmd.Stdout = os.Stdout
@@ -105,7 +108,7 @@ func (s *VerifyStep) importKeys(emails []string) error {
 		if err := cmd.Run(); err != nil {
 			return fmt.Errorf("failed to import key for %s: %v\n", email, err)
 		}
-		s.logger.Info("Imported key for %s", email)
+		s.log.Info("Imported key for %s", email)
 	}
 
 	return nil
