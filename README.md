@@ -60,17 +60,18 @@ The final program must work as a unified cohesive experience.
 - Service: Execution layer, use cases, orchestration logic.
 - Core: Definition of entities, validation, data structures; Does not depend on anything.
 
-Ideally dependencies should flow inward, in practice this is achieved by extensive use of interfaces.
-Interfaces add overhead and they are not always needed. Usually I will have injection of raw implementation
-(without interface) because of that.
+Ideally dependencies should flow inward (gateway depends on service, service depends on core),
+in practice this is achieved by extensive use of interfaces. Interfaces add overhead and they
+are not always needed.
 
 #### Design Patterns
 
 - Strategy Pattern: Used to handle multiple bootloader and initramfs tools. The Service layer
   chooses the right strategy at runtime based on system capabilities and configuration.
+- Factory Pattern: To allow for inversion of dependency. For example define the interface of
+  how a step is created in core layer (internal/core/step_factory.go), and then implement on service
+  layer (internal/service/step_factory.go).
 - Pipeline Pattern: Each step (list, download, compile, etc.) is encapsulated as a modular
-  component. The Pipeline Manager in the Service layer coordinates step dependencies and execution order.
-- Builder Pattern: A flexible way to assemble the kernel build configuration step-by‑step,
-  culminating in a unified kernel build process.
-- Facade Pattern: Provides a simplified interface (a unified kernel context) to coordinate the
-  flow of commands across multiple steps.
+  component (step). The pipeline runs validation and execution separately.
+- Builder Pattern: Flexible way to assemble step-by‑step the pipeline, choosing exacly the steps
+  needed and coordenating and resolving dependencies.
