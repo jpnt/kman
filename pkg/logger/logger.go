@@ -45,7 +45,7 @@ func (l *Logger) Warn(format string, args ...interface{}) {
 
 func (l *Logger) Error(format string, args ...interface{}) {
 	if l.level <= ErrorLevel {
-		l.log("ERROR", "\033[31m", format, args...)
+		l.log("ERRO", "\033[31m", format, args...)
 	}
 }
 
@@ -53,7 +53,7 @@ func (l *Logger) log(level, color, format string, args ...interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	timestamp := time.Now().Format("2006-01-02 15:04:05.00000")
+	timestamp := time.Now().Format("2006-01-02T15:04:05.00000")
 	message := fmt.Sprintf(format, args...)
-	fmt.Printf("%s %s: %s%s\033[0m\n", timestamp, level, color, message)
+	fmt.Printf("%s %s%s\033[0m: %s\n", timestamp, color, level, message)
 }

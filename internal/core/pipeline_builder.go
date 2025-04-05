@@ -1,5 +1,7 @@
 package core
 
+// https://refactoring.guru/design-patterns/builder
+
 import (
 	"github.com/jpnt/kman/pkg/logger"
 )
@@ -7,19 +9,20 @@ import (
 type IPipelineBuilder interface {
 	WithStep(stepName string) IPipelineBuilder
 	WithDefault() IPipelineBuilder
+	Build() IPipeline
 }
 
 type PipelineBuilder struct {
 	logger  logger.ILogger
-	pl      IPipeline
 	factory IStepFactory
+	pipeline 
 }
 
 // Ensure struct implements interface
 var _ IPipelineBuilder = (*PipelineBuilder)(nil)
 
-func NewPipelineBuilder(l logger.ILogger, p IPipeline, f IStepFactory) IPipelineBuilder {
-	return &PipelineBuilder{logger: l, pl: p, factory: f}
+func NewPipelineBuilder(l logger.ILogger, c IKernelContext, f IStepFactory) IPipelineBuilder {
+	return &PipelineBuilder{logger: l, context: c, factory: f}
 }
 
 func (b *PipelineBuilder) WithStep(stepName string) IPipelineBuilder {
@@ -44,4 +47,8 @@ func (b *PipelineBuilder) WithDefault() IPipelineBuilder {
 		WithStep("install").
 		WithStep("initramfs").
 		WithStep("bootloader")
+}
+
+func (b *PipelineBuilder) Build() IPipeline {
+	return &Pipeline{ctx}
 }

@@ -24,7 +24,6 @@ func (s *DownloadStep) Execute() error {
 
 	p := &progress.WriteCounter{}
 	kernelPath, err := utils.DownloadFile(s.ctx.TarballURL, s.ctx.DownloadPath, p)
-
 	if err != nil {
 		return err
 	}

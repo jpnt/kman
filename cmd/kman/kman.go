@@ -9,20 +9,17 @@ import (
 )
 
 func main() {
-	l := logger.NewLogger(logger.InfoLevel)
-
+	log := logger.NewLogger(logger.InfoLevel)
 	ctx := core.NewKernelContext()
-	p := core.NewPipeline(ctx)
-	f := service.NewStepFactory()
+	// pipeline := core.NewPipeline(ctx)
+	fac := service.NewStepFactory()
+	plb := core.NewPipelineBuilder(log, ctx, fac)
 
-	b := core.NewPipelineBuilder(l, p, f)
+	pipeline = plb.WithDefault()
 
-	b = b.WithDefault()
-	// TODO: dynamic argument builder configuration
-
-	err := p.Run()
+	err := pipeline.Run()
 	if err != nil {
-		l.Error("Error: %s", err.Error())
+		log.Error("%s", err.Error())
 		os.Exit(1)
 	}
 }

@@ -3,10 +3,25 @@
 kman aims to automate and unify the Linux Kernel installation from source process, allowing for a
 repeatable way of installing a Linux kernel, generating a initramfs image and updating
 the bootloader configuration, based on the tools and configurations available of your system,
-offering a sane and powerful way to manage kernels on any Linux distribution.
+offering a sane and powerful way to manage kernels in any Linux distribution.
+
+## Examples
+
+- Run everything (download, compile, install, etc)
+
+```sh
+$ kman
+```
+
+- Run a specific step(s)
+
+TODO: is it possible to simplify even further?
+
+```sh
+$ kman install,bootloader,initramfs --dir=./kernel-6.9.9 --initramfs=booster
+```
 
 ## Features
-
 
 - [x] Minimal external libraries
 - [x] Cross‑distro compatibility

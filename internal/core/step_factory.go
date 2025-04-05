@@ -5,5 +5,5 @@ import (
 )
 
 type IStepFactory interface {
-	CreateStep(name string, logger logger.ILogger, ctx IKernelContext) (IStep, error)
+	CreateStep(name string, log logger.ILogger, ctx IKernelContext) (IStep, error)
 }
