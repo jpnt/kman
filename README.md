@@ -5,6 +5,42 @@ repeatable way of installing a Linux kernel, generating a initramfs image and up
 the bootloader configuration, based on the tools and configurations available of your system,
 offering a sane and powerful way to manage kernels in any Linux distribution.
 
+## Installation process
+
+### Via precompiled binaries
+
+1. Go to [releases](https://github.com/jpnt/kman/releases)
+
+2. Download binary for your architecture
+
+3. Make the binary executable
+
+```sh
+chmod +x kman-amd64 
+```
+
+4. Verify installation
+
+```sh
+kman -version
+```
+
+### Via Go get (for go devs)
+
+```sh
+go install github.com/yourrepo/kman@latest
+kman --version
+```
+
+### Build from source
+
+```sh
+git clone https://github.com/yourrepo/kman.git && cd kman
+go mod tidy # install deps
+go build -o kman ./cmd/kman
+kman --version
+```
+
 ## Examples
 
 - Run everything (download, compile, install, etc)
