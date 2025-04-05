@@ -5,8 +5,7 @@ import (
 )
 
 type IPipeline interface {
-	Ctx() IKernelContext
-	AddStep(step IStep)
+	// Ctx() IKernelContext
 	Run() error
 }
 
@@ -18,17 +17,9 @@ type Pipeline struct {
 // Ensure struct implements interface
 var _ IPipeline = (*Pipeline)(nil)
 
-// func NewPipeline(c IKernelContext) *Pipeline {
-	// return &Pipeline{ctx: c}
+// func (pl *Pipeline) Ctx() IKernelContext {
+// return pl.ctx
 // }
-
-func (pl *Pipeline) Ctx() IKernelContext {
-	return pl.ctx
-}
-
-func (pl *Pipeline) AddStep(step IStep) {
-	pl.steps = append(pl.steps, step)
-}
 
 func (pl *Pipeline) Run() error {
 	if len(pl.steps) == 0 {

@@ -11,11 +11,10 @@ import (
 func main() {
 	log := logger.NewLogger(logger.InfoLevel)
 	ctx := core.NewKernelContext()
-	// pipeline := core.NewPipeline(ctx)
-	fac := service.NewStepFactory()
-	plb := core.NewPipelineBuilder(log, ctx, fac)
+	factory := service.NewStepFactory()
+	builder := core.NewPipelineBuilder(log, factory, ctx)
 
-	pipeline = plb.WithDefault()
+	pipeline := builder.WithDefault().Build()
 
 	err := pipeline.Run()
 	if err != nil {
