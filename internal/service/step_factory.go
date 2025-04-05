@@ -15,6 +15,13 @@ func NewStepFactory() core.IStepFactory {
 	return &StepFactory{}
 }
 
+func (f *StepFactory) AvailableSteps() []string {
+	return []string{
+		"list", "download", "verify", "extract", "patch",
+		"configure", "compile", "install", "initramfs", "bootloader",
+	}
+}
+
 func (f *StepFactory) CreateStep(name string, log logger.ILogger, ctx core.IKernelContext) (core.IStep, error) {
 	// Type assert and convert to concrete type
 	l, ok := log.(*logger.Logger)
@@ -49,6 +56,6 @@ func (f *StepFactory) CreateStep(name string, log logger.ILogger, ctx core.IKern
 	// case "bootloader":
 	// return &BootloaderStep{log: l, ctx: c}, nil
 	default:
-		return nil, fmt.Errorf("unknown step: %s", name)
+		return nil, fmt.Errorf("%s step name is not defined", name)
 	}
 }

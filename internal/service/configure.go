@@ -60,8 +60,6 @@ func (s *ConfigureStep) Execute() error {
 			return fmt.Errorf("kernel configuration failed: %w", err)
 		}
 	}
-
-	s.log.Info("Configured Linux kernel")
 	return nil
 }
 

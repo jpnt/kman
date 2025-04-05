@@ -1,5 +1,7 @@
 package core
 
+// https://refactoring.guru/design-patterns/builder
+
 import (
 	"github.com/jpnt/kman/pkg/logger"
 )
@@ -7,41 +9,44 @@ import (
 type IPipelineBuilder interface {
 	WithStep(stepName string) IPipelineBuilder
 	WithDefault() IPipelineBuilder
+	Build() IPipeline
 }
 
 type PipelineBuilder struct {
 	logger  logger.ILogger
-	pl      IPipeline
 	factory IStepFactory
+	ctx     IKernelContext
+	steps   []IStep
 }
 
 // Ensure struct implements interface
 var _ IPipelineBuilder = (*PipelineBuilder)(nil)
 
-func NewPipelineBuilder(l logger.ILogger, p IPipeline, f IStepFactory) IPipelineBuilder {
-	return &PipelineBuilder{logger: l, pl: p, factory: f}
+func NewPipelineBuilder(l logger.ILogger, f IStepFactory, c IKernelContext) IPipelineBuilder {
+	return &PipelineBuilder{logger: l, factory: f, ctx: c}
 }
 
 func (b *PipelineBuilder) WithStep(stepName string) IPipelineBuilder {
-	step, err := b.factory.CreateStep(stepName, b.logger, b.pl.Ctx())
+	step, err := b.factory.CreateStep(stepName, b.logger, b.ctx)
 	if err != nil {
-		b.logger.Warn("Unrecognized step: %q", stepName)
+		b.logger.Warn("Failed to create step %s: %s", stepName, err)
 		return b
 	}
-	b.pl.AddStep(step)
+	b.steps = append(b.steps, step)
+
 	return b
 }
 
 func (b *PipelineBuilder) WithDefault() IPipelineBuilder {
-	return b.
-		WithStep("list").
-		WithStep("download").
-		WithStep("verify").
-		WithStep("extract").
-		WithStep("patch").
-		WithStep("configure").
-		WithStep("compile").
-		WithStep("install").
-		WithStep("initramfs").
-		WithStep("bootloader")
+	availableSteps := b.factory.AvailableSteps()
+
+	for _, stepName := range availableSteps {
+		b.WithStep(stepName)
+	}
+
+	return b
+}
+
+func (b *PipelineBuilder) Build() IPipeline {
+	return &Pipeline{log: b.logger, ctx: b.ctx, steps: b.steps}
 }
