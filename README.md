@@ -46,7 +46,7 @@ kman --version
 - Run everything (download, compile, install, etc)
 
 ```sh
-$ kman
+$ kman run-all
 ```
 
 - Run a specific step(s)

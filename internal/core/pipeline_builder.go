@@ -29,7 +29,7 @@ func NewPipelineBuilder(l logger.ILogger, f IStepFactory, c IKernelContext) IPip
 func (b *PipelineBuilder) WithStep(stepName string) IPipelineBuilder {
 	step, err := b.factory.CreateStep(stepName, b.logger, b.ctx)
 	if err != nil {
-		b.logger.Warn("Failed to create step %q: %s", stepName, err)
+		b.logger.Warn("Failed to create step %s: %s", stepName, err)
 		return b
 	}
 	b.steps = append(b.steps, step)
@@ -48,5 +48,5 @@ func (b *PipelineBuilder) WithDefault() IPipelineBuilder {
 }
 
 func (b *PipelineBuilder) Build() IPipeline {
-	return &Pipeline{ctx: b.ctx, steps: b.steps}
+	return &Pipeline{log: b.logger, ctx: b.ctx, steps: b.steps}
 }

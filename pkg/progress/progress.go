@@ -31,15 +31,15 @@ func (wc *WriteCounter) Start(total int64) {
 func (wc *WriteCounter) Update(current int64) {
 	wc.Current += current
 	if wc.Unknown {
-		fmt.Printf("\rDownloaded %d bytes", wc.Current)
+		fmt.Printf("\r%d bytes", wc.Current)
 	} else {
 		fmt.Printf("\rProgress: %.2f%% (%d/%d bytes)",
-		float64(wc.Current)/float64(wc.Total)*100, wc.Total, wc.Current)
+			float64(wc.Current)/float64(wc.Total)*100, wc.Total, wc.Current)
 	}
 }
 
 func (wc *WriteCounter) Finish() {
-	fmt.Println("\nDownload complete.")
+	fmt.Println(" done.")
 }
 
 // Create a proxy for io.Writer to capture progress updates

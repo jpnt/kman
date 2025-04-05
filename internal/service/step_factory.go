@@ -56,6 +56,6 @@ func (f *StepFactory) CreateStep(name string, log logger.ILogger, ctx core.IKern
 	// case "bootloader":
 	// return &BootloaderStep{log: l, ctx: c}, nil
 	default:
-		return nil, fmt.Errorf("step name %s is not defined", name)
+		return nil, fmt.Errorf("%s step name is not defined", name)
 	}
 }
