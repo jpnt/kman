@@ -21,20 +21,22 @@ type Pipeline struct {
 var _ IPipeline = (*Pipeline)(nil)
 
 func (pl *Pipeline) Run() error {
-	if len(pl.steps) == 0 {
+	numSteps := len(pl.steps)
+	var stepNames []string
+
+	if numSteps == 0 {
 		return fmt.Errorf("no steps were configured")
 	}
 
-	pl.log.Info("The following steps will be executed:")
 	for _, step := range pl.steps {
-		pl.log.Info("- %s", step.Name())
+		stepNames = append(stepNames, step.Name())
 	}
 
-	pl.log.Info("Starting execution ...")
+	pl.log.Info("Executing %d steps: %v", numSteps, stepNames)
 
-	for _, step := range pl.steps {
+	for i, step := range pl.steps {
 		start := time.Now()
-		pl.log.Info("==> Starting step: %s ...", step.Name())
+		pl.log.Info("==> Starting step [%d/%d]: %s", i+1, numSteps, step.Name())
 
 		if err := pl.ctx.Validate(step.Name()); err != nil {
 			return fmt.Errorf("validation failed for step %q: %w", step.Name(), err)
@@ -45,7 +47,7 @@ func (pl *Pipeline) Run() error {
 		}
 
 		duration := time.Since(start)
-		pl.log.Info("<== Completed step: %s in %s", step.Name(), duration)
+		pl.log.Info("<== Completed step [%d/%d]: %s in %s", i+1, numSteps, step.Name(), duration)
 	}
 	return nil
 }
