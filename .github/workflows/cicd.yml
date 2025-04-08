@@ -18,7 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        architecture: [amd64, 386, arm64, arm, riscv64, mips, mips64, mips64le, mipsle, ppc64, ppc64le, s390x]  
+        architecture: [amd64, 386, arm64, arm,
+                       riscv64, mips, mips64,
+                       mips64le, mipsle, ppc64,
+                       ppc64le, s390x]  
 
     steps:
       - name: Checkout code
@@ -35,7 +38,9 @@ jobs:
       - name: Build
         run: |
           VERSION=$(echo "${GITHUB_REF#refs/tags/v}" )
-          GOARCH=${{ matrix.architecture }} GOOS=linux go build -ldflags="-s -w" -v -o kman-${{ matrix.architecture }}-${VERSION} ./cmd/kman/
+          GOARCH=${{ matrix.architecture }} GOOS=linux go \ 
+            build -ldflags="-s -w -X main.Version=${VERSION}" -v \
+            -o kman-${{ matrix.architecture }}-${VERSION} ./cmd/kman/
 
       - name: Display structure of files
         run: ls -lRha
