@@ -19,40 +19,30 @@ type ConfigureStep struct {
 
 var _ core.IStep = (*ConfigureStep)(nil)
 
-var defaultOptions = []string{"defconfig"}
-var validOptions = []string{"defconfig", "menuconfig", "nconfig", "oldconfig"}
-
 func (s *ConfigureStep) Name() string {
 	return "configure"
 }
 
 func (s *ConfigureStep) Execute() error {
 	if s.ctx.ConfigOptions == nil {
-		s.log.Info("No config options were detected, setting up default options ...")
-		s.ctx.ConfigOptions = defaultOptions
-	}
-
-	// TODO: better option than doing this
-	configOptions := s.ctx.ConfigOptions
-	for _, opt := range configOptions {
-		if !isValidOption(opt) {
-			return fmt.Errorf("invalid configuration option: %s", opt)
-		}
+		defaultConfigOptions := []string{"tinyconfig"}
+		s.log.Warn("Kernel config options not provided, defaulting to %s", defaultConfigOptions)
+		s.ctx.ConfigOptions = defaultConfigOptions
 	}
 
 	if err := s.copyOldConfig(); err != nil {
 		return fmt.Errorf("failed to copy .config: %w", err)
 	}
 
-	s.log.Info("Configuring Linux kernel with: %v ...", configOptions)
-
 	dir := s.ctx.Directory
 	if err := os.Chdir(dir); err != nil {
-		return fmt.Errorf("failed to change directory to %s: %w", dir, err)
+		return fmt.Errorf("failed to change directory to %q: %w", dir, err)
 	}
 
-	for _, opt := range configOptions {
-		cmd := exec.Command("make", opt)
+	for _, option := range s.ctx.ConfigOptions {
+		s.log.Info("Configuring Linux kernel with: 'make %s' ...", option)
+
+		cmd := exec.Command("make", option)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
@@ -60,12 +50,13 @@ func (s *ConfigureStep) Execute() error {
 			return fmt.Errorf("kernel configuration failed: %w", err)
 		}
 	}
+
 	return nil
 }
 
 func (s *ConfigureStep) copyOldConfig() error {
 	if s.ctx.OldConfigPath == "" {
-		s.log.Warn("Skipping copy of old .config file")
+		s.log.Warn("Old .config path not provided, skipping ...")
 		return nil
 	}
 
@@ -83,13 +74,4 @@ func (s *ConfigureStep) copyOldConfig() error {
 		return fmt.Errorf("error copying .config: %w", err)
 	}
 	return nil
-}
-
-func isValidOption(option string) bool {
-	for _, validOption := range validOptions {
-		if option == validOption {
-			return true
-		}
-	}
-	return false
 }

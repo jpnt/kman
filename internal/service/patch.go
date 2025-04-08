@@ -23,7 +23,7 @@ func (s *PatchStep) Name() string {
 }
 
 func (s *PatchStep) Execute() error {
-	s.log.Error("patch step: not implemented yet")
+	s.log.Error("patch step: not implemented yet: TODO: use quilt")
 
 	return nil
 }

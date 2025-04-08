@@ -12,7 +12,7 @@ import (
 
 type ExtractStep struct {
 	log *logger.Logger
-	ctx    *core.KernelContext
+	ctx *core.KernelContext
 }
 
 // Ensure struct implements interface

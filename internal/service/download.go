@@ -28,8 +28,7 @@ func (s *DownloadStep) Execute() error {
 		return err
 	}
 
-	s.log.Info("Downloaded Linux kernel tarball to: %s", kernelPath)
 	s.ctx.ArchivePath = kernelPath
-
+	s.log.Info("Downloaded Linux kernel tarball to: %s", kernelPath)
 	return nil
 }

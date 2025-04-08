@@ -22,7 +22,7 @@ chmod +x kman-amd64
 4. Verify installation
 
 ```sh
-kman -version
+kman --version
 ```
 
 ### Via Go get (for go devs)
@@ -41,7 +41,9 @@ go build -o kman ./cmd/kman
 kman --version
 ```
 
-## Examples
+## kman CLI Usage Examples
+
+TODO
 
 - Run everything (download, compile, install, etc)
 
@@ -81,17 +83,15 @@ $ kman install,bootloader,initramfs --dir=./kernel-6.9.9 --initramfs=booster
 
 ## Pipeline Steps
 
-Each step in the pipeline can be executed indidually, but requires some parameter/s.
-
-- Download (url)
-- Verify (archive)
-- Extract (archive)
-- Patch (optional: directory)
-- Configure (optional: .config file, directory, njobs)
-- Compile (optional: directory)
-- Install (optional: directory)
-- Initramfs (optional: initramfs)
-- Bootloader (optional: bootloader)
+- Download
+- Verify
+- Extract
+- Patch
+- Configure
+- Compile
+- Install
+- Initramfs
+- Bootloader
 
 ### Architecture
 

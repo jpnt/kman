@@ -16,9 +16,9 @@ type KernelContext struct {
 	SignatureURL  string
 	ConfigOptions []string
 	OldConfigPath string
-	NumJobs       string
 	Initramfs     string
 	Bootloader    string
+	NumJobs       int
 }
 
 var _ IKernelContext = (*KernelContext)(nil)
